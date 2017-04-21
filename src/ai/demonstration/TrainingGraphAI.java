@@ -27,7 +27,7 @@ public class TrainingGraphAI extends AbstractionLayerAI {
 	private UnitTypeTable utt;
 	
 	public TrainingGraphAI(UnitTypeTable utt) throws JDOMException, IOException {
-		this(0,  new Trace(new SAXBuilder().build("C:\\Daniels_Stuff\\Classes\\Y2_Q2_2017_Winter_CSC-570_AI-In-Games\\micrortsworkspace\\microrts\\trace1.xml").getRootElement(), utt), 5.0, new AStarPathFinding(), utt);
+		this(0,  new Trace(new SAXBuilder().build("./trace1.xml").getRootElement(), utt), 5.0, new AStarPathFinding(), utt);
 	}
 	
 	public TrainingGraphAI(int tracePID, Trace trace, Double epsilon, PathFinding pf, UnitTypeTable utt) {

@@ -255,7 +255,7 @@ public class TGraph {
 		distanceFromATo.put(nodeA.getId(), 0.0);
 		
 		while (!vertices.isEmpty()) {
-			System.out.println("Looking at another vertex");
+			//System.out.println("Looking at another vertex");
 			Long currentNodeId = -1L;
 			Double currentDist = null;
 			for (Long nodeId: distanceFromATo.keySet()) {
