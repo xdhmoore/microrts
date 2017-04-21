@@ -99,6 +99,7 @@ public class Trace {
                 }
             }
 
+            //TODO remove, same code above
             if (gs.getTime()==cycle) {
                 getGameStateAtCycle_cache = gs;
                 return gs;
@@ -119,4 +120,60 @@ public class Trace {
         return gs;
     }    
     
+    
+    // TODO refactor this so you aren't copy-pasting
+    // Note: this function is slow, since it has to simulate the game from the very beginning
+    //       in order to get the appropriate unit actions. So, do not use in the internal loop
+    //       of any AI!
+    TraceEntry getTraceEntryAtCycle_cache = null; // this accelerates the function below if traversing a trace sequentially
+    public GameState getTraceEntryAtCycle(int cycle) {
+        GameState gs = null;
+        for(TraceEntry te:getEntries()) {
+            if (gs==null) {
+                if (getGameStateAtCycle_cache != null && cycle >= getGameStateAtCycle_cache.getTime()) {
+                    if (te.getTime() < getGameStateAtCycle_cache.getTime()) {
+                        continue;
+                    } else {
+                        gs = getGameStateAtCycle_cache.clone();
+                    }
+                } else {
+                    gs = new GameState(te.getPhysicalGameState().clone(), utt);            
+                }
+            }
+            
+            while(gs.getTime()<te.getTime() && gs.getTime()<cycle) {
+                gs.cycle();
+            }
+
+            if (gs.getTime()==cycle) {
+                getGameStateAtCycle_cache = gs;
+                return gs;
+            }
+            
+            // synchronize the traces (some times the unit IDs might go off):
+            for(Unit u1:gs.getUnits()) {
+                for(Unit u2:te.getPhysicalGameState().getUnits()) {
+                    if (u1.getX()==u2.getX() &&
+                        u1.getY()==u2.getY() &&
+                        u1.getType() == u2.getType() &&
+                        u1.getID() != u2.getID()) {
+                        u1.setID(u2.getID());
+                    }
+                }
+            }
+
+            PlayerAction pa0 = new PlayerAction();
+            PlayerAction pa1 = new PlayerAction();
+            for(Pair<Unit,UnitAction> tmp:te.getActions()) {
+                if (tmp.m_a.getPlayer()==0) pa0.addUnitAction(tmp.m_a, tmp.m_b);
+                if (tmp.m_a.getPlayer()==1) pa1.addUnitAction(tmp.m_a, tmp.m_b);
+            }
+            gs.issueSafe(pa0);
+            gs.issueSafe(pa1);
+        }
+        while(gs.getTime()<cycle) gs.cycle();
+        
+        getGameStateAtCycle_cache = gs;
+        return gs;
+    }  
 }

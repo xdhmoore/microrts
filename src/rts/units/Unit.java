@@ -60,7 +60,10 @@ public class Unit implements Serializable {
         hitpoints = u.hitpoints;
         ID = u.ID;        
     }
-            
+    
+    public double euclideanDistance(Unit otherUnit) {
+    	return Math.sqrt(Math.pow(getX() - otherUnit.getX(), 2) + Math.pow(getY() - otherUnit.getY(), 2));
+    }
     
     public int getPlayer() {
         return player;

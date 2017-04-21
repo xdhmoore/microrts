@@ -6,7 +6,10 @@ package rts;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jdom.Element;
+
 import rts.units.Unit;
 import rts.units.UnitTypeTable;
 import util.Pair;
@@ -41,6 +44,17 @@ public class TraceEntry {
     
     public List<Pair<Unit,UnitAction>> getActions() {
         return actions;
+    }
+    
+    public PlayerAction getPlayerAction(int playerId) {
+    	List<Pair<Unit,UnitAction>> unitActions = actions.stream().filter(pair -> pair.m_a.getPlayer() == playerId).collect(Collectors.toList());
+    	PlayerAction playerAction = new PlayerAction();
+    	
+    	for (Pair<Unit, UnitAction> unitActionPair : unitActions) {
+    		playerAction.addUnitAction(unitActionPair.m_a, unitActionPair.m_b);
+    	}
+    	
+    	return playerAction;
     }
     
     public int getTime() {

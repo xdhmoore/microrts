@@ -100,6 +100,8 @@ public class PlayerAction {
         return null;
     }
     
+    // Return a list of PlayerActions that each combine this PA with a unit u + lu[i] combination, for
+    // Unit u passed in and List<UnitAction> lu passed in.
     public List<PlayerAction> cartesianProduct(List<UnitAction> lu, Unit u, GameState s) {
         List<PlayerAction> l = new LinkedList<PlayerAction>();
         
