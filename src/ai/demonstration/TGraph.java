@@ -24,13 +24,10 @@ public class TGraph {
 	// Heuristic inflation factor
 	private double epsilon;
 
-	// TODO rename TNode to Node
 	private Set<Long> tnodes = new HashSet<>();
 	private Map<Long, Node> nodes = new HashMap<>();
 	private Set<Long> terminalTNodes = new HashSet<>();
 	private Set<Long> initTNodes = new HashSet<>();
-	private Map<NodePair, PlayerAction> actionEdges;
-	private Node goalNode;
 	private Node currentStateNode;
 	
 	// The states that are in the current game (not demonstration data)
@@ -57,6 +54,7 @@ public class TGraph {
 	}
 
 	public TGraph(int playerId, Trace trace, double epsilon) {
+		this.epsilon = epsilon;
 		this.playerId = playerId;
 		List<Player> otherPlayers = trace.getEntries().get(0).getPhysicalGameState().getPlayers().stream().filter(p -> p.getID() != playerId).collect(Collectors.toList());
 		if (otherPlayers.size() > 1) throw new RuntimeException("Too many opponents found: " + otherPlayers.size());
@@ -70,9 +68,8 @@ public class TGraph {
 			this.addTNode(newNode);
 			if (prevNode != null) {
 				NodePair edge = new NodePair(prevNode.getId(), newNode.getId());
-				actionEdges.put(edge,  traceEntry.getPlayerAction(playerId));
+				prevNode.addSuccessor(newNode);
 			}
-			prevNode.addSuccessor(newNode);
 			prevNode = newNode;
 		}
 		
@@ -80,49 +77,70 @@ public class TGraph {
 		terminalTNodes.add(traceNodeOrder.get(traceNodeOrder.size() - 1));
 	}
 	
-	public PlayerAction getAction(int player, GameState currentState, GameState goalState) {
-		createSearchNodes(player, currentState, goalState);
+	public PlayerAction getAction(int player, GameState currentState) {
+		Map<Long, PlayerAction> nodeIdToPrevAction = createSearchNodes(player, currentState);
 		
-		// TODO add connections from T terminals to search graph
-		// TODO maybe add connections from all T nodes to search graph
+		Map<Long, Double> nodeIdToHeuristicT = new HashMap<>();
 		
-		calcHeuristicTForTerminalTNodesToGoal();
-		calcHeuristicTForNonTerminalTNodesToGoal();
-		calcEstHeuristicTForTNodesToGoal(currentStateNode, goalNode);
-		calcEstHeuristicTForTerminalTNodesToGoal();
-		calcEstHeuristicTForStartToInitTNodes();
-		
-		return findBestNextNode();
-		
-		// TODO
-		return null;
+		for (Long goalNodeId : searchNodes) {
+			Node goalNode = nodes.get(goalNodeId);
+			
+			// TODO add connections from T terminals to search graph
+			// TODO maybe add connections from all T nodes to search graph
+			
+			calcHeuristicTForTerminalTNodesToGoal(goalNode);
+			calcHeuristicTForNonTerminalTNodesToGoal(goalNode);
+			calcEstHeuristicTForTNodesToGoal(currentStateNode, goalNode);
+			calcEstHeuristicTForTerminalTNodesToGoal(goalNode);
+			calcEstHeuristicTForStartToInitTNodes(goalNode);
+			
+			List<Long> startingNodes = new ArrayList<Long>(nodes.keySet());
+			startingNodes.add(currentStateNode.getId());
+			
+			List<Long> endingNodes = new ArrayList<Long>(nodes.keySet());
+			endingNodes.add(goalNode.getId());
+			
+			NodePair key = new NodePair(currentStateNode.getId(), goalNodeId);
+			double minCost = epsilon * currentStateNode.getNodeState().getVector().getDistance(goalNode.getNodeState().getVector());
+			for (Long startId : startingNodes) {
+				for (Long endId : endingNodes) {
+					Pair<NodePair, NodePair> estKey = new Pair<>(
+						new NodePair(currentStateNode.getId(), goalNodeId),
+						new NodePair(startId, endId)
+					);
+					minCost = Math.min(minCost, estHeuristicT.get(estKey));
+				}
+			}
+			nodeIdToHeuristicT.put(goalNodeId, minCost);
+		}
+		Long nextNode = null;
+		Double minCost = Double.POSITIVE_INFINITY;
+		for (Long neighborNodeId : searchNodes) {
+			if (minCost > nodeIdToHeuristicT.get(neighborNodeId)) {
+				minCost = nodeIdToHeuristicT.get(neighborNodeId);
+				nextNode = neighborNodeId;
+			}
+		}
+		return nodeIdToPrevAction.get(nextNode);
 	}
 	
-	private void findBestNextNode() {
-		
-	}
-	
-	private void createSearchNodes(int playerId, GameState currentState, GameState goalState) {
+	private Map<Long, PlayerAction> createSearchNodes(int playerId, GameState currentState) {
+		Map<Long, PlayerAction> nodeIdToPlayerAction = new HashMap<>();
 		currentStateNode = new SearchNode(playerId, new TNodeStateGameState(currentState, playerId, opponentId), null);
 				
 		for (PlayerAction playerAction: currentState.getPlayerActions(playerId)) {
-			// TODO might want to call cloneIssue here? probably slow
 			GameState tmpGS = currentState.clone();
 				
-			// TODO try issueSafe?
 			boolean didSomething = tmpGS.issue(playerAction);
 			
 			if (didSomething) {
 				Node newNode = new SearchNode(idGen.nextId(), new TNodeStateGameState(tmpGS, playerId, opponentId), currentStateNode);
 				this.addSearchNode(newNode);
 				NodePair edge = new NodePair(currentStateNode.getId(), newNode.getId());
-				actionEdges.put(edge, playerAction);
+				nodeIdToPlayerAction.put(newNode.getId(), playerAction);
 			}
 		}
-		
-		// TODO this goal node isn't connected to anything. Do we need to add more nodes? Maybe a lattice based on actions?
-		goalNode = new SearchNode(idGen.nextId(), new TNodeStateGameState(goalState, playerId, opponentId), null);
-		this.addSearchNode(goalNode);
+		return nodeIdToPlayerAction;
 	}
 	
 	private double calcEstHeuristicT(Node aNode, Node bNode, Node sNode, Node sPrimeNode) {
@@ -146,7 +164,7 @@ public class TGraph {
 		}
 	}
 	
-	private void calcEstHeuristicTForTerminalTNodesToGoal() {
+	private void calcEstHeuristicTForTerminalTNodesToGoal(Node goalNode) {
 		for (Long termNodeId : terminalTNodes) {
 			
 			//TODO pass in heuristicP instead of the default euclidean distance
@@ -154,7 +172,7 @@ public class TGraph {
 		}
 	}
 	
-	private void calcEstHeuristicTForStartToInitTNodes() {
+	private void calcEstHeuristicTForStartToInitTNodes(Node goalNode) {
 		for (Long initTNodeId : initTNodes) {
 			calcSaveEstHeuristicT(currentStateNode, goalNode, currentStateNode, nodes.get(initTNodeId));
 		}
@@ -182,19 +200,18 @@ public class TGraph {
 	}
 	
 	
-	//TODO is this valid?
+	//TODO is this valid? Can we just use the time like this or do we need to run a simulation?
 	private double calcTransitionCost(Node a, Node b) {
 		return b.getNodeState().getTime() - b.getNodeState().getTime();
 	}
 	
 	
-	private void calcHeuristicTForNonTerminalTNodesToGoal() {
+	private void calcHeuristicTForNonTerminalTNodesToGoal(Node goalNode) {
 		for (Long termTNodeId : terminalTNodes) {
 			Node currentNode = nodes.get(termTNodeId);
 			while (currentNode.getPrevious() != null) {
 				NodePair edge = new NodePair(currentNode.getPrevious(), goalNode.getId());
 				
-				//TODO can we use time here? or do we need to run a simulation from currentNode to goalNode?
 				double val = heuristicT.get(currentNode) + calcTransitionCost(nodes.get(currentNode.getPrevious()), goalNode);
 				if (heuristicT.get(edge) > val) {
 					heuristicT.put(edge, val);
@@ -203,7 +220,7 @@ public class TGraph {
 		}
 	}
 
-	private void calcHeuristicTForTerminalTNodesToGoal() {
+	private void calcHeuristicTForTerminalTNodesToGoal(Node goalNode) {
 		for (Long termTNodeId : terminalTNodes) {
 			Node termNode = nodes.get(termTNodeId);
 			NodePair edge = new NodePair(termNode.getId(), goalNode.getId());
@@ -228,8 +245,7 @@ public class TGraph {
 		distanceFromATo.put(nodeA.getId(), 0.0);
 		
 		while (!vertices.isEmpty()) {
-			
-			//TODO could make this faster using a heap
+
 			Long currentNodeId = -1L;
 			Double currentDist = Double.POSITIVE_INFINITY;
 			for (Long nodeId: distanceFromATo.keySet()) {
@@ -256,19 +272,6 @@ public class TGraph {
 	private interface EdgeCostCalculator {
 		public Double calcEdgeCost(Node a, Node b);
 	}
-	
-	// Returns the least possible number of cycles between 2 states.
-	private long shortestTimeBetween(Node nodeA, Node nodeB) {
-		
-		// For each dimension, figure out the greatest possible change that can be done in one playeraction
-		// For each dimension, figure out the distance between the two
-		// For each distance, divide by greatest possible change to get smallest number of actions
-		// Take the max of these action numbers
-		
-		// TODO
-		return 5;
-	}
-
 	
 	private long addSearchNode(Node node) {
 		nodes.put(node.getId(), node);

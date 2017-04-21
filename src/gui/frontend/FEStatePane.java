@@ -11,6 +11,7 @@ import ai.core.AI;
 import ai.core.AIWithComputationBudget;
 import ai.core.ContinuingAI;
 import ai.core.PseudoContinuingAI;
+import ai.demonstration.TrainingGraphAI;
 import ai.BranchingFactorCalculatorDouble;
 import ai.BranchingFactorCalculatorLong;
 import ai.PassiveAI;
@@ -119,6 +120,7 @@ public class FEStatePane extends JPanel {
 
     public static Class AIs[] = {PassiveAI.class,
                    MouseController.class,
+                   TrainingGraphAI.class,
                    RandomAI.class,
                    RandomBiasedAI.class,
                    WorkerRush.class,

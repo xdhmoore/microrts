@@ -296,9 +296,6 @@ public class GameState implements Serializable{
         l.add(empty);
         
         
-        // TODO um, what is this? Creating an empty PlayerAction just validate resource
-        // usage doesn't overlap, maybe?
-        
         // Generate the reserved resources:
         for(Unit u:pgs.getUnits()) {
 //            if (u.getPlayer()==pID) {
@@ -313,7 +310,6 @@ public class GameState implements Serializable{
         if (unitActions.get(unit)==null) {
             List<PlayerAction> l2 = new LinkedList<PlayerAction>();
             
-            // TODO I don't think this needs to be a loop
             for(PlayerAction pa:l) {
                 l2.addAll(pa.cartesianProduct(unit.getUnitActions(this), unit, this));
             }

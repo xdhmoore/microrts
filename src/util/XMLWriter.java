@@ -15,8 +15,6 @@ import java.io.Writer;
 public class XMLWriter {
 	private static final int tabsize = 2;
 	
-	//TODO set up to use maven or gradle so can download libraries like jackson
-	
 	/**
 	 * Number of spaces indentation currently being used.
 	 */

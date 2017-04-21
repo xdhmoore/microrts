@@ -51,26 +51,7 @@ public abstract class Node {
 		return nodeState;
 	}
 	
-	// Our "feature vector":
-	// # my resources
-	// # my workers
-	// # my ranged
-	// # my light
-	// # my heavy
-	// # my bases
-	// # my barracks
-	// # of my minerals left to be mined
-	// # opponent resources
-	// # opponent workers
-	// # opponent ranged
-	// # opponent light
-	// # opponent heavy
-	// # opponent bases
-	// # opponent barracks
-	// # opponent's minerals left to be mined
-	// time
-	
-	// TODO
+	// TODO - Potential "features"
 	// order of my units from closest to opponent's center of mass to furthest
 	// order of opponent's units from my center of mass to furthest
 	// center of mass of each type of unit for me (or even just buildings, workers, and attack units)

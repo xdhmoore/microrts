@@ -70,7 +70,6 @@ public abstract class TNodeState {
 		return getPGS().getPlayer(playerId);
 	}
 	
-	//TODO there has to be an annotation in a library somewhere that does caching like this
 	private List<Unit> getMyUnits() {
 		if (null != _myUnits) return _myUnits;
 		_myUnits = getPGS().getUnits().stream().filter(u -> { return u.getPlayer() == playerId; }).collect(Collectors.toList());
@@ -118,7 +117,6 @@ public abstract class TNodeState {
 		return (int) getPGS().getUnits().stream().filter(u -> { return !u.getType().canMove && u.getType().isStockpile; }).count();
 	}
 	
-	//TODO there has to be an annotation in a library somewhere that does caching like this
 	private List<Unit> getOpponentUnits() {
 		if (null != _opponentUnits) return _opponentUnits;
 		_opponentUnits = getPGS().getUnits().stream().filter(u -> { return u.getPlayer() == opponentId; }).collect(Collectors.toList());
@@ -181,7 +179,6 @@ public abstract class TNodeState {
 	}
 	
 	private int getMinAttackUnitProductionTime() {
-		//TODO this could be cached, or maybe even static
 		return getUnitTypeTable().getUnitTypes().stream().filter(UnitPredicates::isAttackUnitType).map(t -> t.produceTime).min(Integer::compare).get();
 	}
 	
@@ -242,7 +239,6 @@ public abstract class TNodeState {
 		//SM - factor in creation of new bases that create new workers...:S
 		items.add((double) destNode.getNumMyWorkers() / (double) getUnitProductionTime("barracks"));
 		
-		
 		//Max resources collected per cycle
 		items.add(((double) destNode.getNumOpponentWorkers() * getWorkerType().harvestAmount) / (double) getOpponentMinResourceRouteTime());
 		
@@ -262,8 +258,6 @@ public abstract class TNodeState {
 		return new ArrayRealVector(items.toArray(new Double[]{}));
 	}
 	
-
-	//TODO this needs to be fixed. it's not the euclidean distance
 	public double maxDeltaHeuristic(TNodeState nodeState) {
 		//distance between two points is shortest dist divided by max distance gained per cycle
 		
@@ -273,15 +267,4 @@ public abstract class TNodeState {
 		return vector.subtract(nodeState.getVector()).ebeDivide(maxStepVector).getMaxValue(); 
 	}
 
-	// TODO
-	// Number of my uncollected resources
-	// Number of opponent's uncollected resources
-	// order of my units from closest to opponent's center of mass to furthest
-	// order of opponent's units from my center of mass to furthest
-	// center of mass of each type of unit for me (or even just buildings, workers, and attack units)
-	// center of mass of each type of unit for opponent (or even ")
-	// time since last attack
-	// location of last attack
-	// time since my last attack on them
-	// location of my last attack on them
 }
