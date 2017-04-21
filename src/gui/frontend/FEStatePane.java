@@ -118,9 +118,10 @@ public class FEStatePane extends JPanel {
                                 new EvaluationFunctionForwarding(new SimpleEvaluationFunction()),
                                 new SimpleOptEvaluationFunction()};
 
-    public static Class AIs[] = {PassiveAI.class,
+    public static Class AIs[] = {
+            	   TrainingGraphAI.class,
+    			   PassiveAI.class,
                    MouseController.class,
-                   TrainingGraphAI.class,
                    RandomAI.class,
                    RandomBiasedAI.class,
                    WorkerRush.class,

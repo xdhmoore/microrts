@@ -75,24 +75,32 @@ public class TGraph {
 		
 		initTNodes.add(traceNodeOrder.get(0));
 		terminalTNodes.add(traceNodeOrder.get(traceNodeOrder.size() - 1));
+		System.out.println("Finished TGraph constructor");
 	}
 	
 	public PlayerAction getAction(int player, GameState currentState) {
+		System.out.println("Entering getAction");
 		Map<Long, PlayerAction> nodeIdToPrevAction = createSearchNodes(player, currentState);
 		
 		Map<Long, Double> nodeIdToHeuristicT = new HashMap<>();
 		
 		for (Long goalNodeId : searchNodes) {
+			System.out.println("Looking at next neighbor node");
 			Node goalNode = nodes.get(goalNodeId);
 			
 			// TODO add connections from T terminals to search graph
 			// TODO maybe add connections from all T nodes to search graph
 			
 			calcHeuristicTForTerminalTNodesToGoal(goalNode);
+			System.out.println("Finished h_T for term tnodes to goal");
 			calcHeuristicTForNonTerminalTNodesToGoal(goalNode);
+			System.out.println("Finished nonterminal tnodes to goal");
 			calcEstHeuristicTForTNodesToGoal(currentStateNode, goalNode);
+			System.out.println("Finished est h_T for tnodes to goal");
 			calcEstHeuristicTForTerminalTNodesToGoal(goalNode);
+			System.out.println("Finished est h_T for terminal tnodes to goal");
 			calcEstHeuristicTForStartToInitTNodes(goalNode);
+			System.out.println("Done with main heuristics calculations");
 			
 			List<Long> startingNodes = new ArrayList<Long>(nodes.keySet());
 			startingNodes.add(currentStateNode.getId());
@@ -121,6 +129,7 @@ public class TGraph {
 				nextNode = neighborNodeId;
 			}
 		}
+		System.out.println("Exiting getAction");
 		return nodeIdToPrevAction.get(nextNode);
 	}
 	
@@ -224,6 +233,7 @@ public class TGraph {
 		for (Long termTNodeId : terminalTNodes) {
 			Node termNode = nodes.get(termTNodeId);
 			NodePair edge = new NodePair(termNode.getId(), goalNode.getId());
+			//TODO can't calc heuristicP because termNode has no successors. Do we need to add some?
 			heuristicT.put(edge, calcHeuristicP(termNode, goalNode));
 		}
 	}
@@ -234,9 +244,9 @@ public class TGraph {
 	}
 	
 	private Double dijkstras(Node nodeA, Node nodeB, EdgeCostCalculator edgeCalculator) {
+		System.out.println("Starting dijkstra's");
 		Set<Long> vertices = new HashSet<>(nodes.keySet());
 		Map<Long, Double> distanceFromATo = new HashMap<>(nodes.size());
-		Map<Long, Long> prevNodeIds = new HashMap<>();
 		
 		for (Long l : vertices) {
 			distanceFromATo.put(l, Double.POSITIVE_INFINITY);
@@ -245,11 +255,11 @@ public class TGraph {
 		distanceFromATo.put(nodeA.getId(), 0.0);
 		
 		while (!vertices.isEmpty()) {
-
+			System.out.println("Looking at another vertex");
 			Long currentNodeId = -1L;
-			Double currentDist = Double.POSITIVE_INFINITY;
+			Double currentDist = null;
 			for (Long nodeId: distanceFromATo.keySet()) {
-				if (distanceFromATo.get(nodeId) < currentDist) {
+				if (currentDist == null || distanceFromATo.get(nodeId) < currentDist) {
 					currentNodeId = nodeId;
 					currentDist = distanceFromATo.get(currentNodeId);
 				}
@@ -263,6 +273,9 @@ public class TGraph {
 			
 			for (Long neighborId : nodes.get(currentNodeId).getSuccessors()) {
 				Double newDist = distanceFromATo.get(currentNodeId) + edgeCalculator.calcEdgeCost(nodes.get(currentNodeId), nodes.get(neighborId));
+				if (newDist < distanceFromATo.get(neighborId)){
+					distanceFromATo.put(neighborId, newDist);
+				}
 			}
 			
 		}
