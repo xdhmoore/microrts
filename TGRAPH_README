@@ -49,4 +49,7 @@ Running T-Graph "Different Endpoints" Scenario
 8. Setting Epsilon to "40" allows the Euclidean portion of the heuristic to dominate during the fork near the end and shortcut the detour at the top right
 
 
+Note:
+--------
+The worker appears to travel quickly and then slow down halfway through it's path. I haven't investigated, but I believe may be because the T-graph calculations at the beginning "use up" the builtin delays for each of its actions, causing the actions to happen quickly later.
 
