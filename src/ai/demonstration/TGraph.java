@@ -60,7 +60,7 @@ public class TGraph {
 	    }
 	}
 	
-	public static class Location { //extends Pair<Integer, Integer> {
+	public static class Location {
 		public Integer m_a, m_b;
 		public Location(int x, int y) { m_a = x; m_b = y; }
 		public Location(Unit u) { this(u.getX(), u.getY()); }
@@ -174,7 +174,6 @@ public class TGraph {
 	private void calcEstHeuristicTForTerminalTNodesToGoal(Node currentStateNode, Node goalNode) {
 		for (Location termNodeId : terminalTNodes) {
 			
-			//TODO pass in heuristicP instead of the default euclidean distance
 			calcSaveEstHeuristicT(currentStateNode, goalNode, nodes.get(termNodeId), goalNode);
 		}
 	}
@@ -207,10 +206,8 @@ public class TGraph {
 	}
 	
 	
-	//TODO is this valid? Can we just use the time like this or do we need to run a simulation?
+
 	private double calcTransitionCost(Node a, Node b) {
-		//TODO this needs to be a simulation function which sets an action for unit to move from a to b
-		//and then simulates until that happens and returns the time it took.
 		return manhattanDistance(a, b) * (double) unitType.moveTime;
 	}
 	
@@ -261,7 +258,6 @@ public class TGraph {
 		distanceFromATo.put(nodeA.getId(), 0.0);
 		
 		while (!vertices.isEmpty()) {
-			//System.out.println("Looking at another vertex");
 			Location currentNodeId = null;
 			Double currentDist = null;
 			for (Location nodeId: vertices) {
@@ -347,8 +343,7 @@ public class TGraph {
 				}
 			}
 		}
-		List myList = estHeuristicT.keySet().stream().filter(k -> Double.isNaN(estHeuristicT.get(k))).collect(Collectors.toList());
-		System.out.println(myList.size() + 0);
+
 		heuristicT.put(new NodePair(currentStateNode.getId(), goalNode.getId()), minCost);
 		
 		System.out.println("Saving start " + currentStateNode.getId() + ":" + Double.toString(minCost) + ", end " + goalNode.getId());
@@ -395,6 +390,7 @@ public class TGraph {
 		}
 	}
 
+	//Since we are using t-graphs regardless of target, this is always true
 	public boolean relevantFor(Unit start, int targetpos, GameState gs) {
 		return true;
 		/*

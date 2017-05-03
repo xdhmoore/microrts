@@ -1,0 +1,52 @@
+TGRAPH_README
+
+Running microRTS
+------------------
+To run on Windows, double-click microrts.jar. Otherwise,
+
+cd microrts
+java -jar microrts.jar
+
+microrts.jar must be run from the microrts folder.
+
+Running Default A* Scenario
+---------------------------
+1. Run microrts.jar
+2. Select "WorkerRushBases" for Player 0.
+3. Select "RangedRush" for Player 1.
+4. Click "Start"
+
+Running T-Graph Scenario
+-------------------------
+1. Run microrts.jar
+2. Select "TGraphWorkerRushBases" for Player 0
+3. Set TraceFile to "trace_top.xml"
+4. Set Epsilon to "200"
+5. Set Player 1 to "RangedRush"
+6. Click "Start"
+
+Running T-Graph "Trace Blocked" Scenario
+---------------------------------------------
+1. Run microrts.jar
+2. Click "Load" at the top and select the file "microrts/maps/bases20x20TrapModifiedNoTp.xml"
+2. Select "TGraphWorkerRushBases" for Player 0
+3. Set TraceFile to "trace_top.xml"
+4. Set Epsilon to "200"
+5. Set Player 1 to "RangedRush"
+6. Click "Start"
+7. Setting Epsilon to "10" yields the default A* path
+
+Running T-Graph "Different Endpoints" Scenario
+-----------------------------------------------
+1. Run microrts.jar
+2. Click "Load" at the top and select the file "microrts/maps/bases20x20TrapModifiedNoTp.xml"
+2. Select "TGraphWorkerRushBases" for Player 0
+3. Set TraceFile to "trace_diff_target.xml"
+4. Set Epsilon to "200"
+5. Set Player 1 to "RangedRush"
+6. Click "Start"
+7. Setting Epsilon to "10" yields the default A* path
+8. Setting Epsilon to "40" allows the Euclidean portion of the heuristic to dominate during the fork near the end and shortcut the detour at the top right
+
+
+

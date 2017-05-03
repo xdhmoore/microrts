@@ -3,7 +3,10 @@
 .classpath
 .project
 .settings
+microrts.jar
 
 #Vim files
 *~
 *.swp
+
+

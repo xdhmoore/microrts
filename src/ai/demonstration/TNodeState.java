@@ -28,9 +28,6 @@ public abstract class TNodeState {
 	private List<Unit> _opponentBases;
 	
 	private RealVector vector;
-	private UnitTypeTable unitTypeTable;
-
-	private RealVector maxStateDistancePerCycleVector;
 	
 	protected TNodeState(int playerId, int opponentId) {
 		this.playerId = playerId;

@@ -732,7 +732,7 @@ public class FEStatePane extends JPanel {
 //        p1.add(Box.createVerticalGlue());
         //MapGenerator mg = new MapGenerator(currentUtt);
         //GameState initialGs = new GameState(mg.bases8x8(), currentUtt);
-        PhysicalGameState pgs = PhysicalGameState.load("C:\\Daniels_Stuff\\Classes\\Current\\micrortsworkspace\\microrts\\maps\\bases20x20TrapModified.xml", currentUtt);
+        PhysicalGameState pgs = PhysicalGameState.load(".\\maps\\bases20x20TrapModified.xml", currentUtt);
         GameState initialGs = new GameState(pgs, currentUtt);
 
         JPanel p2 = new JPanel();

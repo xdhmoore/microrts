@@ -16,7 +16,6 @@ public class Node {
 	private Location previous = null;
 	protected TNodeState nodeState;
 	private Set<Location> neighbors = new HashSet<>();
-	private Map<Location, Node> nodes;
 	
 	public Node(Location id, TNodeState nodeState, Node previousNode) {
 		this.id = id;
@@ -74,13 +73,6 @@ public class Node {
 	public double distance(Node nodeB) {
 		return euclideanDistance(nodeB);
 	}
-	
-	
-	/*
-	public double euclideanDistance(Node nodeB) {
-		return nodeState.getVector().getDistance(nodeB.getNodeState().getVector());
-	}
-	*/
 
 	public TNodeState getNodeState() {
 		return nodeState;
@@ -111,14 +103,5 @@ public class Node {
 	public String toString() {
 		return id.toString();
 	}
-	
-	// TODO - Potential "features"
-	// order of my units from closest to opponent's center of mass to furthest
-	// order of opponent's units from my center of mass to furthest
-	// center of mass of each type of unit for me (or even just buildings, workers, and attack units)
-	// center of mass of each type of unit for opponent (or even ")
-	// time since last attack
-	// location of last attack
-	// time since my last attack on them
-	// location of my last attack on them
+
 }
