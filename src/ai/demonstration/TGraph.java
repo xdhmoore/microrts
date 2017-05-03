@@ -129,7 +129,7 @@ public class TGraph {
 		
 		initTNodes.add(traceNodeOrder.get(0));
 		terminalTNodes.add(traceNodeOrder.get(traceNodeOrder.size() - 1));
-		System.out.println("Finished TGraph constructor");
+		//System.out.println("Finished TGraph constructor");
 	}
 	
 	private void createSearchNodes(int playerId, GameState currentState) {
@@ -247,7 +247,7 @@ public class TGraph {
 	}
 	
 	private Double dijkstras(Node nodeA, Node nodeB, EdgeCostCalculator edgeCalculator) {
-		System.out.println("Starting dijkstra's");
+		//System.out.println("Starting dijkstra's");
 		Set<Location> vertices = new HashSet<>(nodes.keySet());
 		Map<Location, Double> distanceFromATo = new HashMap<>(nodes.size());
 		
@@ -304,7 +304,6 @@ public class TGraph {
 	}
 	
 	public double getHeuristicT(Location startLoc, Location goalLoc, GameState gs) {
-		System.out.println("Entering getActssion");
 		createSearchNodes(playerId, gs);
 		
 		Node goalNode = nodes.get(goalLoc);
@@ -313,15 +312,15 @@ public class TGraph {
 		
 		calcHeuristicTForTNodesToSelf(startLoc, goalLoc);
 		calcHeuristicTForTerminalTNodesToGoal(goalNode);
-		System.out.println("Finished h_T for term tnodes to goal.");
+		//System.out.println("Finished h_T for term tnodes to goal.");
 		calcHeuristicTForNonTerminalTNodesToGoal(goalNode);
-		System.out.println("Finished nonterminal tnodes to goal");
+		//System.out.println("Finished nonterminal tnodes to goal");
 		calcEstHeuristicTForTNodesToGoal(currentStateNode, goalNode);
-		System.out.println("Finished est h_T for tnodes to goal");
+		//System.out.println("Finished est h_T for tnodes to goal");
 		calcEstHeuristicTForTerminalTNodesToGoal(currentStateNode, goalNode);
-		System.out.println("Finished est h_T for terminal tnodes to goal");
+		//System.out.println("Finished est h_T for terminal tnodes to goal");
 		calcEstHeuristicTForStartToInitTNodes(currentStateNode, goalNode);
-		System.out.println("Done with main heuristics calculations");
+		//System.out.println("Done with main heuristics calculations");
 		
 		List<Location> startingNodes = new ArrayList<Location>(tnodes);
 		startingNodes.add(currentStateNode.getId());
@@ -346,7 +345,6 @@ public class TGraph {
 
 		heuristicT.put(new NodePair(currentStateNode.getId(), goalNode.getId()), minCost);
 		
-		System.out.println("Saving start " + currentStateNode.getId() + ":" + Double.toString(minCost) + ", end " + goalNode.getId());
 		return minCost;
 		
 	}
