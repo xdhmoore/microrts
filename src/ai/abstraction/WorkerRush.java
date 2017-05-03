@@ -57,7 +57,8 @@ public class WorkerRush extends AbstractionLayerAI {
         Player p = gs.getPlayer(player);
         PlayerAction pa = new PlayerAction();
 //        System.out.println("LightRushAI for player " + player + " (cycle " + gs.getTime() + ")");
-                
+          
+        /*single worker rush
         // behavior of bases:
         for(Unit u:pgs.getUnits()) {
             if (u.getType()==baseType && 
@@ -65,7 +66,7 @@ public class WorkerRush extends AbstractionLayerAI {
                 gs.getActionAssignment(u)==null) {
                 baseBehavior(u,p,pgs);
             }
-        }
+        }*/
 
         // behavior of melee units:
         for(Unit u:pgs.getUnits()) {
@@ -137,7 +138,7 @@ public class WorkerRush extends AbstractionLayerAI {
                 resourcesUsed+=baseType.cost;
             }
         }
-        
+        /*
         if (freeWorkers.size()>0) harvestWorker = freeWorkers.remove(0);
         
         // harvest with the harvest worker:
@@ -174,7 +175,7 @@ public class WorkerRush extends AbstractionLayerAI {
                 }
             }
         }
-        
+        */
         for(Unit u:freeWorkers) meleeUnitBehavior(u, p, gs);
         
     }

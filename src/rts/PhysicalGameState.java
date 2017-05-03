@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import rts.units.Unit;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import util.XMLWriter;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
 import rts.units.UnitTypeTable;
 
 
@@ -86,6 +88,15 @@ public class PhysicalGameState implements Serializable {
     
     public void setTerrain(int t[]){
         terrain = t;
+    }
+    
+    public boolean isOnBoard(int x, int y) {
+    	return x >= 0 && y >= 0 &&
+    		x < width && y < height;
+    }
+    
+    public boolean isValidSpace(int x, int y) {
+    	return isOnBoard(x, y) && getTerrain(x, y) == 0;
     }
     
     public void addPlayer(Player p) {
@@ -303,7 +314,7 @@ public class PhysicalGameState implements Serializable {
         height = Integer.parseInt(e.getAttributeValue("height"));
         
         terrain = new int[width*height];
-        String terrainString = terrain_e.getValue();
+        String terrainString = terrain_e.getValue().replaceAll("\\n\\s*\\d*-", "").replaceAll("\\s*", "");
         for(int i = 0;i<width*height;i++) {
             String c = terrainString.substring(i, i+1);
             terrain[i] = Integer.parseInt(c);
@@ -335,4 +346,5 @@ public class PhysicalGameState implements Serializable {
       
         return free;
     }
+     
 }

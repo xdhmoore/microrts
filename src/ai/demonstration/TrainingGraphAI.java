@@ -19,8 +19,8 @@ import rts.PlayerAction;
 import rts.Trace;
 import rts.units.UnitTypeTable;
 
-public class TrainingGraphAI extends AbstractionLayerAI {
-
+public class TrainingGraphAI {// extends AbstractionLayerAI {
+/*
 	private int tracePID;
 	private double epsilon;
 	private Trace trace;
@@ -68,5 +68,6 @@ public class TrainingGraphAI extends AbstractionLayerAI {
         //parameters.add(new ParameterSpecification("EvaluationFunction", EvaluationFunction.class, new SimpleSqrtEvaluationFunction3()));
         
         return parameters;
-    }       
+    }  
+    */     
 }

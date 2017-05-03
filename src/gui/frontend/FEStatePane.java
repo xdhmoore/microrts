@@ -6,57 +6,6 @@
 
 package gui.frontend;
 
-import ai.BranchingFactorCalculatorBigInteger;
-import ai.core.AI;
-import ai.core.AIWithComputationBudget;
-import ai.core.ContinuingAI;
-import ai.core.PseudoContinuingAI;
-import ai.demonstration.TrainingGraphAI;
-import ai.BranchingFactorCalculatorDouble;
-import ai.BranchingFactorCalculatorLong;
-import ai.PassiveAI;
-import ai.RandomAI;
-import ai.RandomBiasedAI;
-import ai.abstraction.HeavyRush;
-import ai.abstraction.LightRush;
-import ai.abstraction.RangedRush;
-import ai.abstraction.WorkerRush;
-import ai.abstraction.partialobservability.POHeavyRush;
-import ai.abstraction.partialobservability.POLightRush;
-import ai.abstraction.partialobservability.PORangedRush;
-import ai.abstraction.partialobservability.POWorkerRush;
-import ai.abstraction.pathfinding.AStarPathFinding;
-import ai.abstraction.pathfinding.BFSPathFinding;
-import ai.abstraction.pathfinding.FloodFillPathFinding;
-import ai.abstraction.pathfinding.GreedyPathFinding;
-import ai.abstraction.pathfinding.PathFinding;
-import ai.ahtn.AHTNAI;
-import ai.core.ParameterSpecification;
-import ai.evaluation.EvaluationFunction;
-import ai.evaluation.EvaluationFunctionForwarding;
-import ai.evaluation.SimpleEvaluationFunction;
-import ai.evaluation.SimpleSqrtEvaluationFunction;
-import ai.evaluation.SimpleSqrtEvaluationFunction2;
-import ai.evaluation.SimpleSqrtEvaluationFunction3;
-import ai.mcts.informedmcts.InformedNaiveMCTS;
-import ai.mcts.mlps.MLPSMCTS;
-import ai.mcts.naivemcts.NaiveMCTS;
-import ai.mcts.uct.UCT;
-import ai.mcts.uct.UCTFirstPlayUrgency;
-import ai.mcts.uct.UCTUnitActions;
-import ai.minimax.ABCD.IDABCD;
-import ai.minimax.RTMiniMax.IDRTMinimax;
-import ai.minimax.RTMiniMax.IDRTMinimaxRandomized;
-import ai.montecarlo.MonteCarlo;
-import ai.montecarlo.lsi.LSI;
-import ai.portfolio.PortfolioAI;
-import ai.portfolio.portfoliogreedysearch.PGSAI;
-import ai.puppet.PuppetSearchMCTS;
-import ai.stochastic.UnitActionProbabilityDistribution;
-import gui.MouseController;
-import gui.PhysicalGameStateMouseJFrame;
-import gui.PhysicalGameStatePanel;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -84,6 +33,58 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import ai.BranchingFactorCalculatorBigInteger;
+import ai.PassiveAI;
+import ai.RandomAI;
+import ai.RandomBiasedAI;
+import ai.abstraction.HeavyRush;
+import ai.abstraction.LightRush;
+import ai.abstraction.RangedRush;
+import ai.abstraction.TGraphWorkerRushBases;
+import ai.abstraction.WorkerRush;
+import ai.abstraction.WorkerRushBases;
+import ai.abstraction.partialobservability.POHeavyRush;
+import ai.abstraction.partialobservability.POLightRush;
+import ai.abstraction.partialobservability.PORangedRush;
+import ai.abstraction.partialobservability.POWorkerRush;
+import ai.abstraction.pathfinding.AStarPathFinding;
+import ai.abstraction.pathfinding.BFSPathFinding;
+import ai.abstraction.pathfinding.FloodFillPathFinding;
+import ai.abstraction.pathfinding.GreedyPathFinding;
+import ai.abstraction.pathfinding.PathFinding;
+import ai.abstraction.pathfinding.TGraphPathFinding;
+import ai.ahtn.AHTNAI;
+import ai.core.AI;
+import ai.core.AIWithComputationBudget;
+import ai.core.ContinuingAI;
+import ai.core.InterruptibleAI;
+import ai.core.ParameterSpecification;
+import ai.core.PseudoContinuingAI;
+import ai.evaluation.EvaluationFunction;
+import ai.evaluation.EvaluationFunctionForwarding;
+import ai.evaluation.SimpleEvaluationFunction;
+import ai.evaluation.SimpleOptEvaluationFunction;
+import ai.evaluation.SimpleSqrtEvaluationFunction;
+import ai.evaluation.SimpleSqrtEvaluationFunction2;
+import ai.evaluation.SimpleSqrtEvaluationFunction3;
+import ai.mcts.informedmcts.InformedNaiveMCTS;
+import ai.mcts.mlps.MLPSMCTS;
+import ai.mcts.naivemcts.NaiveMCTS;
+import ai.mcts.uct.UCT;
+import ai.mcts.uct.UCTFirstPlayUrgency;
+import ai.mcts.uct.UCTUnitActions;
+import ai.minimax.ABCD.IDABCD;
+import ai.minimax.RTMiniMax.IDRTMinimax;
+import ai.minimax.RTMiniMax.IDRTMinimaxRandomized;
+import ai.montecarlo.MonteCarlo;
+import ai.montecarlo.lsi.LSI;
+import ai.portfolio.PortfolioAI;
+import ai.portfolio.portfoliogreedysearch.PGSAI;
+import ai.puppet.PuppetSearchMCTS;
+import ai.stochastic.UnitActionProbabilityDistribution;
+import gui.MouseController;
+import gui.PhysicalGameStateMouseJFrame;
+import gui.PhysicalGameStatePanel;
 import rts.GameState;
 import rts.PartiallyObservableGameState;
 import rts.PhysicalGameState;
@@ -97,8 +98,6 @@ import rts.units.UnitTypeTable;
 import tests.MapGenerator;
 import util.Pair;
 import util.XMLWriter;
-import ai.core.InterruptibleAI;
-import ai.evaluation.SimpleOptEvaluationFunction;
 
 /**
  *
@@ -119,12 +118,13 @@ public class FEStatePane extends JPanel {
                                 new SimpleOptEvaluationFunction()};
 
     public static Class AIs[] = {
-            	   TrainingGraphAI.class,
     			   PassiveAI.class,
                    MouseController.class,
                    RandomAI.class,
                    RandomBiasedAI.class,
                    WorkerRush.class,
+                   TGraphWorkerRushBases.class,
+                   WorkerRushBases.class,
                    LightRush.class,
                    HeavyRush.class,
                    RangedRush.class,
@@ -730,8 +730,10 @@ public class FEStatePane extends JPanel {
         });   
         
 //        p1.add(Box.createVerticalGlue());
-        MapGenerator mg = new MapGenerator(currentUtt);
-        GameState initialGs = new GameState(mg.bases8x8(), currentUtt);
+        //MapGenerator mg = new MapGenerator(currentUtt);
+        //GameState initialGs = new GameState(mg.bases8x8(), currentUtt);
+        PhysicalGameState pgs = PhysicalGameState.load("C:\\Daniels_Stuff\\Classes\\Current\\micrortsworkspace\\microrts\\maps\\bases20x20TrapModified.xml", currentUtt);
+        GameState initialGs = new GameState(pgs, currentUtt);
 
         JPanel p2 = new JPanel();
         p2.setLayout(new BoxLayout(p2, BoxLayout.Y_AXIS));
@@ -874,6 +876,7 @@ public class FEStatePane extends JPanel {
                 p.type == long.class ||
                 p.type == float.class ||
                 p.type == double.class ||
+                p.type == Double.class ||
                 p.type == String.class) {
                 JComponent c = addTextField(jPanel,p.name, p.defaultValue.toString(), p.defaultValue.toString().length()+1);
                 components.put(p.name, c);

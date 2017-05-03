@@ -4,20 +4,32 @@
  */
 package gui;
 
-import ai.evaluation.EvaluationFunction;
-import ai.evaluation.SimpleEvaluationFunction;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JPanel;
+
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+import ai.demonstration.TGraph.Location;
+import ai.evaluation.EvaluationFunction;
+import ai.evaluation.SimpleEvaluationFunction;
 import rts.GameState;
 import rts.PartiallyObservableGameState;
 import rts.PhysicalGameState;
+import rts.Trace;
+import rts.TraceEntry;
 import rts.UnitAction;
 import rts.UnitActionAssignment;
 import rts.units.Unit;
