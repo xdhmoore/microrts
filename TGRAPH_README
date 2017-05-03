@@ -1,5 +1,7 @@
 TGRAPH_README
 
+Requires Java 8
+
 Running microRTS
 ------------------
 To run on Windows, double-click microrts.jar. Otherwise,
